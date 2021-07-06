@@ -1,0 +1,13 @@
+<ConfigFile>
+  <Settings>
+    <!--time in milleseconds-->
+    <!--default: 1500; if value is less than 1500 then default will be used-->
+    <RefreshTime>3000</RefreshTime>
+  </Settings>
+  <PingDerplings>
+    <derp name="Google" host="8.8.8.8" />
+    <derp name="Cloudflare #1" host="1.1.1.1" />
+    <derp name="Cloudflare #2" host="1.0.0.1" />
+    <derp name="Blah" host="" />
+  </PingDerplings>
+</ConfigFile>

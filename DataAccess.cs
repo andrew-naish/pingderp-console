@@ -1,4 +1,5 @@
-﻿using System.Data.SQLite;
+﻿using System;
+using System.Data.SQLite;
 using System.IO;
 using System.Collections.Generic;
 using System.Xml.Linq;
@@ -30,14 +31,14 @@ namespace pingderp_console
                 // skip this item if either are null
                 if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(host))
                 {
-                    ConsoleWrite.Warning("Not adding derpling because either the name or the value are blank.");
+                    ConsoleWrite.Warning($"Not adding derpling because either the name or the host are blank. {Environment.NewLine}  {derpling}");
                     continue;
                 }
 
-                // update database
+                // update database and capture the HostId
                 var databaseHostId = Database.InsertHost(name, host);
 
-                // otherwise create a derpling and add to list
+                // create a derpling and add to list
                 var newDerpling = new PingDerpling(name, host, databaseHostId);
                 AllDerplings.Add(newDerpling);
             }

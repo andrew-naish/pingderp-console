@@ -77,9 +77,9 @@ namespace pingderp_console
                 
                 // columns
                 "result_id INTEGER PRIMARY KEY," +
-                //"Host text NOT NULL," +
-                "RTT int NOT NULL," +
                 "host_id int NOT NULL," +
+                "latency int NOT NULL," +
+                "datetime text NOT NULL," +
 
                 // set foreign key
                 "FOREIGN KEY (host_id) REFERENCES hosts(host_id)" +
@@ -99,23 +99,28 @@ namespace pingderp_console
 
         public static void InsertResult(long HostId, long Result)
         {
-            var Query = "INSERT INTO ping_results(host_id, RTT) VALUES(@host_id, @rtt)";
-
+            var Query = "INSERT INTO ping_results(host_id, latency, datetime) VALUES(@host_id, @latency, @datetime)";
             var dbCommand = new SQLiteCommand(dbConnection)
             {
                 CommandText = Query
             };
 
+            // get current datetime and add to params
+            var utcNow = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            dbCommand.Parameters.AddWithValue("@datetime", utcNow);
+            
+            // add the rest
             dbCommand.Parameters.AddWithValue("@host_id", HostId);
-            dbCommand.Parameters.AddWithValue("@rtt", Result);
+            dbCommand.Parameters.AddWithValue("@latency", Result);
 
+            // send it
             dbCommand.Prepare();
             _ = dbCommand.ExecuteNonQuery();
         }
 
         internal static StatsResult GetStatistics(long HostId)
         {
-            var Query = $"SELECT CAST(round(avg(RTT),0) AS bigint) as 'avg', CAST(round(MIN(RTT),0) AS bigint) as 'min', CAST(round(MAX(RTT),0) AS bigint) as 'max' FROM ping_results WHERE host_id = '{HostId}'";
+            var Query = $"SELECT CAST(round(avg(latency),0) AS bigint) as 'avg', CAST(round(MIN(latency),0) AS bigint) as 'min', CAST(round(MAX(latency),0) AS bigint) as 'max' FROM ping_results WHERE host_id = '{HostId}'";
             var dbCommand = new SQLiteCommand(dbConnection)
             {
                 CommandText = Query
